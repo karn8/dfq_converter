@@ -3,11 +3,20 @@ import os
 from openpyxl import Workbook, load_workbook
 from datetime import datetime
 
-folder_path = 'C:\\Users\\asus\\Desktop\\WORK\\TEST'
-csv_files = [file for file in os.listdir(folder_path) if file.endswith('.csv')]
+# Get the current working directory
+current_directory = os.getcwd()
+
+# Define the output folder for DFQ files
+output_folder = os.path.join(current_directory, 'OUTPUT_DFQ')
+
+# Create the output folder if it doesn't exist
+os.makedirs(output_folder, exist_ok=True)
+
+# Get a list of all CSV files in the current directory
+csv_files = [file for file in os.listdir(current_directory) if file.endswith('.csv')]
 
 for csv_file in csv_files:
-    csv_file_path = os.path.join(folder_path, csv_file)
+    csv_file_path = os.path.join(current_directory, csv_file)
 
     with open(csv_file_path, 'r', encoding='cp1252') as file:
         lines = file.readlines()
@@ -70,7 +79,13 @@ for csv_file in csv_files:
     parsed_datetime = datetime.strptime(dateTime, "%d-%b-%Y %H:%M:%S")
     formatted_date = parsed_datetime.strftime("%d.%m.%Y/%H:%M:%S")
 
-    with open(f"{loaded_sheet_1['C10'].value}.dfq", "w") as output_file:
+    # Generate the output DFQ file name based on the original CSV file name
+    dfq_file_name = os.path.splitext(csv_file)[0] + ".dfq"
+    
+    # Specify the path for the output DFQ file in the output folder
+    output_dfq_file_path = os.path.join(output_folder, dfq_file_name)
+
+    with open(output_dfq_file_path, "w") as output_file:
         output_file.write(f'K0100 {(row_count - 1)}\n')
         output_file.write('K0101 2\n')
         
