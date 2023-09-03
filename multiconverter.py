@@ -3,16 +3,11 @@ import os
 from openpyxl import Workbook, load_workbook
 from datetime import datetime
 
-# Get the current working directory
+custom_output_folder = 'C:\\Users\\asus\\Desktop\\WORK\\OUTPUT_DFQ'
+
+os.makedirs(custom_output_folder, exist_ok=True)
+
 current_directory = os.getcwd()
-
-# Define the output folder for DFQ files
-output_folder = os.path.join(current_directory, 'OUTPUT_DFQ')
-
-# Create the output folder if it doesn't exist
-os.makedirs(output_folder, exist_ok=True)
-
-# Get a list of all CSV files in the current directory
 csv_files = [file for file in os.listdir(current_directory) if file.endswith('.csv')]
 
 for csv_file in csv_files:
@@ -83,7 +78,7 @@ for csv_file in csv_files:
     dfq_file_name = os.path.splitext(csv_file)[0] + ".dfq"
     
     # Specify the path for the output DFQ file in the output folder
-    output_dfq_file_path = os.path.join(output_folder, dfq_file_name)
+    output_dfq_file_path = os.path.join(custom_output_folder, dfq_file_name)
 
     with open(output_dfq_file_path, "w") as output_file:
         output_file.write(f'K0100 {(row_count - 1)}\n')
