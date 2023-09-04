@@ -3,7 +3,8 @@ import os
 from openpyxl import Workbook, load_workbook
 from datetime import datetime
 import schedule
-import time
+from time import sleep
+from tqdm import tqdm
 
 custom_output_folder = 'C:\\Users\\asus\\Desktop\\WORK\\OUTPUT_DFQ'
 
@@ -128,15 +129,19 @@ def process_csv_files(directory):
         os.remove(excel_file_2)
 
 def job():
-    print("Running the code in all subdirectories...")
+    print("Running the converter script in all subdirectories...")
     for root, dirs, files in os.walk("."):
         for dir in dirs:
             subdirectory_path = os.path.join(root, dir)
             print(subdirectory_path)
             process_csv_files(subdirectory_path)
 
-schedule.every(30).seconds.do(job)
+schedule.every(10).seconds.do(job)
+
+for i in tqdm(range(0, 10), desc ="Progress: "):
+    sleep(.4)
 
 while True:
     schedule.run_pending()
-    time.sleep(1)
+    sleep(1)
+
