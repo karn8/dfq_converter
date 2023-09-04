@@ -136,10 +136,12 @@ def job():
             print(subdirectory_path)
             process_csv_files(subdirectory_path)
 
-schedule.every(10).seconds.do(job)
+    for i in tqdm(range(0, 10),colour="#00fffd", desc ="Progress: "):
+        sleep(.1)    
 
-for i in tqdm(range(0, 10), desc ="Progress: "):
-    sleep(.4)
+
+print("Initializing...")
+schedule.every(10).seconds.do(job)
 
 while True:
     schedule.run_pending()
