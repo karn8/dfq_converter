@@ -12,6 +12,115 @@ os.makedirs(timestamp_dir, exist_ok=True)
 
 def process_csv_files(directory, timestamp_file):
     csv_files = [file for file in os.listdir(directory) if file.endswith('.csv')]
+
+    k_field_mapping = {
+    'K1001': 'Part_Number',
+    'K1002': 'PartTitle',
+    'K1003': 'Aggregate',
+    'K1004': 'Part Amendment status',
+    'K1005': 'Component',
+    'K1007': 'Part number â€“ Abbreviation',
+    'K1008': 'Model',
+    'K1009': 'Part code',
+    'K1011': 'Variant',
+    'K1022': 'Manufacturer name',
+    'K1041': 'Drawing number',
+    'K1042': 'Drawing Amendment',
+    'K1053': 'Contract',
+    'K1072': 'Supplier Description',
+    'K1081': 'Machine Number',
+    'K1082': 'Machine Description',
+    'K1083': 'Machine Number',
+    'K1085': 'Machine Location',
+    'K1086': 'Operation',
+    'K1087': 'Work Cycle Description',
+    'K1100': 'Plant',
+    'K1101': 'Department',
+    'K1102': 'Gaging-Station_Name',
+    'K1103': 'Cost centre',
+    'K1110': 'Order number',
+    'K1201': 'Test Facility Number',
+    'K1202': 'Test Facility Description',
+    'K1203': 'Reason for Test',
+    'K1206': 'Test Location',
+    'K1209': 'Inspection type',
+    'K1230': 'Gage room',
+    'K2001': 'Characteristic Number',
+    'K2002': 'Characteristic Description',
+    'K2003': 'Characteristic Abbreviation',
+    'K2004': 'Characteristic Type',
+    'K2005': 'Characteristics Class',
+    'K2006': 'Control Item',
+    'K2007': 'Control Type',
+    'K2008': 'Group type',
+    'K2009': 'Measured quantity',
+    'K2015': 'Tool wear type (Trend)',
+    'K2016': '100% Measurement',
+    'K2022': 'Decimal Places',
+    'K2043': 'Measuring Device Name',
+    'K2060': 'Events Catalo',
+    'K2061': 'Process Parameter',
+    'K2062': 'Cavity catalogue',
+    'K2063': 'Machine catalogue',
+    'K2064': 'Gage catalogue',
+    'K2065': 'Operator catalogue',
+    'K2066': 'Sub-catalogue K0061',
+    'K2067': 'Sub-catalogue K0062',
+    'K2068': 'Sub-catalogue K0063',
+    'K2092': 'Characteristic text',
+    'K2093': 'Processing status',
+    'K2100': 'Target value',
+    'K2101': 'Nominal Value',
+    'K2110': 'Lower Specification Limit',
+    'K2111': 'Upper Specification Limit',
+    'K2112': 'Lower Allowance',
+    'K2113': 'Upper Allowance',
+    'K2114': 'Lower Scrap Limit',
+    'K2115': 'Upper Scrap Limit',
+    'K2120': 'Lower Boundary Type',
+    'K2121': 'Upper Boundary Type',
+    'K2130': 'Lower Plausibility Limit',
+    'K2131': 'Upper Plausibility Limit',
+    'K2142': 'Unit',
+    'K2281': 'Calibration Part Number middle',
+    'K2301': 'Machine number',
+    'K2302': 'Machine Description',
+    'K2303': 'Department/Cost centre',
+    'K2311': 'Production Type (Operation)',
+    'K2312': 'Production Type Description',
+    'K2320': 'Contract Number',
+    'K2401': 'Gage Number',
+    'K2402': 'Gage Description',
+    'K2403': 'Gage Group',
+    'K2404': 'Gage Resolution',
+    'K0001': 'Measured value',
+    'K0002': 'Attribute',
+    'K0004': 'Date/Time',
+    'K0005': 'Event',
+    'K0006': 'Batch number',
+    'K0007': 'Cavity number',
+    'K0008': 'Operator name',
+    'K0009': 'Text',
+    'K0010': 'Machine number',
+    'K0011': 'Process parameter',
+    'K0012': 'Gage number',
+    'K0014': 'Part ID',
+    'K0015': 'Reason for test',
+    'K0016': 'Production number',
+    'K0017': 'Work piece fixture number',
+    'K0053': 'Order',
+    'K0054': 'K0054',
+    'K0055': 'K0055',
+    'K0056': 'K0056',
+    'K0057': 'K0057',
+    'K0058': 'K0058',
+    'K0059': 'K0059',
+    'K0060': 'K0060',
+    'K0061': 'K0061',
+    'K0062': 'K0062',
+    'K0063': 'K0063'
+    }
+
     
     last_processed_timestamps = {}
     if os.path.exists(timestamp_file):
@@ -29,15 +138,22 @@ def process_csv_files(directory, timestamp_file):
             with open(csv_file_path, 'r', encoding='cp1252') as file:
                 lines = file.readlines()
             
-            part_1_lines = lines[:28]
-            csv_1 = "csv_1.csv"
-            with open(csv_1, 'w', encoding='cp1252') as file:
-                file.writelines(part_1_lines)
+            split_index = -1
+            for i, line in enumerate(lines):
+                if line.startswith("Measurement Name"):
+                    split_index = i-1
+                    break
+            
+            if split_index != -1:
+                part_1_lines = lines[:split_index + 1]
+                csv_1 = "csv_1.csv"
+                with open(csv_1, 'w', encoding='cp1252') as file:
+                    file.writelines(part_1_lines)
 
-            part_2_lines = lines[28:]
-            csv_2 = "csv_2.csv"
-            with open(csv_2, 'w', encoding='cp1252') as file:
-                file.writelines(part_2_lines)
+                part_2_lines = lines[split_index + 1:]
+                csv_2 = "csv_2.csv"
+                with open(csv_2, 'w', encoding='cp1252') as file:
+                    file.writelines(part_2_lines)
 
             df_part_1 = pd.read_csv(csv_1, sep=',', header=None, encoding='cp1252')
             columns_to_add_1 = 12 - len(df_part_1.iloc[0])
@@ -96,15 +212,31 @@ def process_csv_files(directory, timestamp_file):
             with open(output_dfq_file_path, "w") as output_file:
                 output_file.write(f'K0100 {(row_count - 1)}\n')
                 output_file.write('K0101 2\n')
+
+                for k_field, column_name in k_field_mapping.items():
+                    row_number = None
+
+                    for row_number, row in enumerate(loaded_sheet_1.iter_rows(), start=1):
+                        for cell in row:
+                            if cell.value == column_name:
+                                output_file.write(f'{k_field}/1 {loaded_sheet_1[f"C{row_number}"].value}\n')
+                                break
+                        else:
+                            continue
+                        break 
+
+            # with open(output_dfq_file_path, "w") as output_file:
+            #     output_file.write(f'K0100 {(row_count - 1)}\n')
+            #     output_file.write('K0101 2\n')
             
-                output_file.write(f'K1001/1 {loaded_sheet_1["C20"].value}\n')
-                output_file.write(f'K1002/1 {loaded_sheet_1["C1"].value}\n')
-                output_file.write(f'K1003/1 {loaded_sheet_1["C21"].value}\n')
-                output_file.write(f'K1005/1 {loaded_sheet_1["C23"].value}\n')
-                output_file.write(f'K1008/1 {loaded_sheet_1["C22"].value}\n')
-                output_file.write(f'K1086/1 {loaded_sheet_1["C24"].value}\n')
-                output_file.write(f'K1100/1 {loaded_sheet_1["C25"].value}\n')
-                output_file.write(f'K1102/1 {loaded_sheet_1["C19"].value}\n')
+            #     output_file.write(f'K1001/1 {loaded_sheet_1["C20"].value}\n')
+            #     output_file.write(f'K1002/1 {loaded_sheet_1["C1"].value}\n')
+            #     output_file.write(f'K1003/1 {loaded_sheet_1["C21"].value}\n')
+            #     output_file.write(f'K1005/1 {loaded_sheet_1["C23"].value}\n')
+            #     output_file.write(f'K1008/1 {loaded_sheet_1["C22"].value}\n')
+            #     output_file.write(f'K1086/1 {loaded_sheet_1["C24"].value}\n')
+            #     output_file.write(f'K1100/1 {loaded_sheet_1["C25"].value}\n')
+            #     output_file.write(f'K1102/1 {loaded_sheet_1["C19"].value}\n')
 
                 for i in range(1, row_count):
                     output_file.write(f'K2001/{i} {i}\n')
@@ -137,7 +269,6 @@ def process_csv_files(directory, timestamp_file):
             os.remove(csv_2)
             os.remove(excel_file_1)
             os.remove(excel_file_2)
-
             
             # Update the timestamp for the processed file in the dictionary
             last_processed_timestamps[csv_file] = file_timestamp
@@ -172,7 +303,7 @@ if __name__ == "__main__":
     print(f"Initializing the converter for directory: {args.directory}")
     job(args.directory)
 
-    schedule.every(3).minutes.do(job, args.directory)
+    schedule.every(20).seconds.do(job, args.directory)
 
     while True:
         schedule.run_pending()
