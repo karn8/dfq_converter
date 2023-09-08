@@ -293,18 +293,19 @@ def job(root_directory):
         sleep(.1)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="CSV to DFQ Converter")
-    parser.add_argument("directory", help="Specify the root directory to process CSV files")
-    args = parser.parse_args()
+    parser = argparse.ArgumentParser(description="CSV -> DFQ Converter")
+    directory = input("Specify the root directory to process CSV files: ")
+    #parser.add_argument("directory", help="Specify the root directory to process CSV files")
+    #args = parser.parse_args()
 
     custom_output_folder = 'C:\\Users\\asus\\Desktop\\WORK\\OUTPUT_DFQ'
     os.makedirs(custom_output_folder, exist_ok=True)
 
-    print(f"Initializing the converter for directory: {args.directory}")
-    job(args.directory)
+    print(f"Initializing the converter for directory: {directory}")
+    job(directory)
 
-    schedule.every(20).seconds.do(job, args.directory)
-
+    schedule.every(20).seconds.do(job, directory)
+    
     while True:
         schedule.run_pending()
         sleep(1)
